@@ -1,0 +1,100 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
+
+body {
+    background: #1a1a2e url('https://www.transparenttextures.com/patterns/dark-denim-3.png');
+    color: #e0e0e0;
+    font-family: 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    perspective: 1000px;
+}
+#game-container, #main-menu {
+    width: 95vw;
+    height: 95vh;
+    border: 2px solid #4a4e69;
+    border-radius: 15px;
+    padding: 20px;
+    background: rgba(22, 33, 62, 0.9);
+    backdrop-filter: blur(5px);
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
+}
+#game-container { display: none; grid-template-areas: "opponent-info opponent-field opponent-deck" "center-line center-line center-line" "player-info player-field player-deck"; grid-template-rows: 200px 50px 200px; grid-template-columns: 200px 1fr 200px; gap: 10px; position: relative; }
+
+#main-menu { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 25px; }
+#main-menu h1 {
+    font-size: 4em;
+    color: #fca311;
+    text-shadow: 0 0 10px #fca311, 0 0 20px #e53935;
+}
+.menu-button { 
+    padding: 20px 40px; 
+    font-size: 1.5em; 
+    cursor: pointer; 
+    border: 2px solid #fca311;
+    border-radius: 10px; 
+    background: transparent;
+    color: #fca311;
+    font-weight: bold;
+    transition: all 0.3s;
+}
+.menu-button:hover {
+    background-color: #fca311;
+    color: #14213d;
+    box-shadow: 0 0 20px #fca311;
+}
+.menu-button:disabled {
+    border-color: #4a4e69;
+    color: #4a4e69;
+    cursor: not-allowed;
+    background: transparent;
+}
+
+.field { display: flex; justify-content: center; align-items: center; gap: 10px; background-color: rgba(0, 0, 0, 0.3); border-radius: 10px; padding: 10px; }
+#opponent-field { grid-area: opponent-field; flex-direction: row-reverse; }
+#player-field { grid-area: player-field; }
+
+.card { width: 80px; height: 112px; border: 2px solid #9a8c98; border-radius: 8px; background-size: cover; background-position: center; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s, opacity 0.5s; position: relative; color: white; font-weight: bold; box-shadow: 3px 3px 5px rgba(0,0,0,0.5); }
+.card:hover { transform: translateY(-10px) scale(1.1); }
+
+.stats { position: absolute; bottom: 2px; left: 2px; right: 2px; display: flex; justify-content: space-between; font-size: 14px; background: rgba(0, 0, 0, 0.7); padding: 3px; border-radius: 0 0 5px 5px; }
+.stats span { display: flex; align-items: center; gap: 3px; }
+.stats .icon { width: 12px; height: 12px; }
+
+.cost { position: absolute; top: 2px; left: 2px; background-color: #14213d; border-radius: 50%; width: 22px; height: 22px; display: flex; justify-content: center; align-items: center; border: 1px solid #fca311; font-size: 14px; }
+
+.player-info, .opponent-info {
+    grid-area: player-info;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+    padding: 15px;
+    border-radius: 10px;
+    background: linear-gradient(145deg, #1e1e3f, #1a1a35);
+    box-shadow: 5px 5px 10px #121224, -5px -5px 10px #24244c;
+    font-size: 1.2em;
+}
+.opponent-info { grid-area: opponent-info; }
+.player-info h2, .opponent-info h2 { margin: 0; color: #fca311; }
+.player-info p, .opponent-info p { margin: 5px 0; }
+
+.player-deck, .opponent-deck { grid-area: player-deck; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+.opponent-deck { grid-area: opponent-deck; }
+
+#player-hand { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; }
+#turn-indicator, #end-turn-button { display: none; }
+#turn-indicator { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); padding: 10px 20px; background: #fca311; color: #14213d; border-radius: 10px; font-size: 1.2em; font-weight: bold; }
+#end-turn-button { position: absolute; right: 40px; bottom: 40px; padding: 15px 30px; font-size: 1em; cursor: pointer; border: 2px solid #fca311; border-radius: 8px; background-color: #14213d; color: #fca311; font-weight: bold; transition: all 0.2s; }
+#end-turn-button:hover:not(:disabled) { background-color: #fca311; color: #14213d; }
+
+.laser { position: absolute; background-color: red; height: 3px; transform-origin: 0 50%; opacity: 0.7; pointer-events: none; box-shadow: 0 0 10px red; border-radius: 2px; }
+.action-menu { position: absolute; background-color: #14213d; border: 2px solid #fca311; border-radius: 8px; padding: 5px; display: flex; flex-direction: column; gap: 5px; z-index: 100; }
+.action-menu button { background-color: #4a4e69; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; }
+.action-menu button:hover { background-color: #c9ada7; }
+.action-menu button:disabled { background-color: #2a2d3e; color: #666; cursor: not-allowed; }
+.card.destroyed { animation: destroy-animation 0.5s forwards; }
+@keyframes destroy-animation { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2) rotate(15deg); opacity: 0.5; } 100% { transform: scale(0); opacity: 0; } }
