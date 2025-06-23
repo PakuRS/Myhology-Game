@@ -4,212 +4,42 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Card Duel</title>
-    <style>
-        /* ТУК Е ПОПРАВЕНИЯТ РЕД */
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@700&display=swap');
-
-        body {
-            background: #1a1a2e url('https://www.transparenttextures.com/patterns/dark-denim-3.png');
-            color: #e0e0e0;
-            font-family: 'Roboto', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            overflow: hidden;
-            perspective: 1000px;
-        }
-        #game-container, #main-menu {
-            width: 95vw;
-            height: 95vh;
-            border: 2px solid #4a4e69;
-            border-radius: 15px;
-            padding: 20px;
-            background: rgba(22, 33, 62, 0.9);
-            backdrop-filter: blur(5px);
-            box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
-        }
-        #game-container { display: none; grid-template-areas: "opponent-info opponent-field opponent-deck" "center-line center-line center-line" "player-info player-field player-deck"; grid-template-rows: 200px 50px 200px; grid-template-columns: 200px 1fr 200px; gap: 10px; position: relative; }
-        
-        #main-menu { display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 25px; }
-        #main-menu h1 {
-            font-size: 4em;
-            color: #fca311;
-            text-shadow: 0 0 10px #fca311, 0 0 20px #e53935;
-        }
-        .menu-button { 
-            padding: 20px 40px; 
-            font-size: 1.5em; 
-            cursor: pointer; 
-            border: 2px solid #fca311;
-            border-radius: 10px; 
-            background: transparent;
-            color: #fca311;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-        .menu-button:hover {
-            background-color: #fca311;
-            color: #14213d;
-            box-shadow: 0 0 20px #fca311;
-        }
-        .menu-button:disabled {
-            border-color: #4a4e69;
-            color: #4a4e69;
-            cursor: not-allowed;
-            background: transparent;
-        }
-
-        .field { display: flex; justify-content: center; align-items: center; gap: 10px; background-color: rgba(0, 0, 0, 0.3); border-radius: 10px; padding: 10px; }
-        #opponent-field { grid-area: opponent-field; flex-direction: row-reverse; }
-        #player-field { grid-area: player-field; }
-        
-        .card { width: 80px; height: 112px; border: 2px solid #9a8c98; border-radius: 8px; background-size: cover; background-position: center; cursor: pointer; transition: transform 0.3s, box-shadow 0.3s, opacity 0.5s; position: relative; color: white; font-weight: bold; box-shadow: 3px 3px 5px rgba(0,0,0,0.5); }
-        .card:hover { transform: translateY(-10px) scale(1.1); }
-        
-        .stats { position: absolute; bottom: 2px; left: 2px; right: 2px; display: flex; justify-content: space-between; font-size: 14px; background: rgba(0, 0, 0, 0.7); padding: 3px; border-radius: 0 0 5px 5px; }
-        .stats span { display: flex; align-items: center; gap: 3px; }
-        .stats .icon { width: 12px; height: 12px; }
-
-        .cost { position: absolute; top: 2px; left: 2px; background-color: #14213d; border-radius: 50%; width: 22px; height: 22px; display: flex; justify-content: center; align-items: center; border: 1px solid #fca311; font-size: 14px; }
-        
-        .player-info, .opponent-info {
-            grid-area: player-info;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-around;
-            align-items: center;
-            padding: 15px;
-            border-radius: 10px;
-            background: linear-gradient(145deg, #1e1e3f, #1a1a35);
-            box-shadow: 5px 5px 10px #121224, -5px -5px 10px #24244c;
-            font-size: 1.2em;
-        }
-        .opponent-info { grid-area: opponent-info; }
-        .player-info h2, .opponent-info h2 { margin: 0; color: #fca311; }
-        .player-info p, .opponent-info p { margin: 5px 0; }
-
-        .player-deck, .opponent-deck { grid-area: player-deck; display: flex; flex-direction: column; justify-content: center; align-items: center; }
-        .opponent-deck { grid-area: opponent-deck; }
-        
-        #player-hand { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; }
-        #turn-indicator, #end-turn-button { display: none; }
-        #turn-indicator { position: absolute; top: 20px; left: 50%; transform: translateX(-50%); padding: 10px 20px; background: #fca311; color: #14213d; border-radius: 10px; font-size: 1.2em; font-weight: bold; }
-        #end-turn-button { position: absolute; right: 40px; bottom: 40px; padding: 15px 30px; font-size: 1em; cursor: pointer; border: 2px solid #fca311; border-radius: 8px; background-color: #14213d; color: #fca311; font-weight: bold; transition: all 0.2s; }
-        #end-turn-button:hover:not(:disabled) { background-color: #fca311; color: #14213d; }
-
-        .laser { position: absolute; background-color: red; height: 3px; transform-origin: 0 50%; opacity: 0.7; pointer-events: none; box-shadow: 0 0 10px red; border-radius: 2px; }
-        .action-menu { position: absolute; background-color: #14213d; border: 2px solid #fca311; border-radius: 8px; padding: 5px; display: flex; flex-direction: column; gap: 5px; z-index: 100; }
-        .action-menu button { background-color: #4a4e69; color: white; border: none; padding: 8px; border-radius: 5px; cursor: pointer; }
-        .action-menu button:hover { background-color: #c9ada7; }
-        .action-menu button:disabled { background-color: #2a2d3e; color: #666; cursor: not-allowed; }
-        .card.destroyed { animation: destroy-animation 0.5s forwards; }
-        @keyframes destroy-animation { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.2) rotate(15deg); opacity: 0.5; } 100% { transform: scale(0); opacity: 0; } }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div id="main-menu"><h1>Card Duel</h1><button class="menu-button" id="play-ai-button">Play vs. AI</button><button class="menu-button" id="play-human-button" disabled>Play vs. Human (Coming Soon)</button></div>
-    <div id="game-container"><div class="opponent-info" id="opponent-info-box"> <h2>Opponent</h2> <p id="opponent-hp">HP: 20</p> <p id="opponent-mana">Mana: 1/1</p> </div><div id="opponent-field" class="field"></div><div class="opponent-deck"> <p>Deck: <span id="opponent-deck-count">30</span></p> </div><div id="center-line"></div><div class="player-info"> <h2>Player</h2> <p id="player-hp">HP: 20</p> <p id="player-mana">Mana: 1/1</p> </div><div id="player-field" class="field"></div><div class="player-deck"> <p>Deck: <span id="player-deck-count">30</span></p> </div></div>
-    <div id="player-hand"></div><div id="turn-indicator"></div><button id="end-turn-button">End Turn</button>
 
-    <script>
-        const cardDatabase = { "Rat":{attack:10,defense:5,cost:1,image:"https://i.imgur.com/3jiKmHe.png"},"Evil Weevil":{attack:20,defense:15,cost:2,image:"https://i.imgur.com/WwD7rqj.png"},"Goblin":{attack:15,defense:25,cost:3,image:"https://i.imgur.com/lBbVF8J.png"},"Vampire":{attack:30,defense:25,cost:4,image:"https://i.imgur.com/XJT7Wec.png"},"King Goblin":{attack:40,defense:40,cost:5,image:"https://i.imgur.com/rW58q2x.png"}, };
-        let gameState;
+    <div id="main-menu">
+        <h1>Card Duel</h1>
+        <button class="menu-button" id="play-ai-button">Play vs. AI</button>
+        <button class="menu-button" id="play-human-button" disabled>Play vs. Human (Coming Soon)</button>
+    </div>
 
-        const soundDraw = new Audio('https://www.myinstants.com/media/sounds/card-draw.mp3');
-        const soundDestroy = new Audio('https://www.myinstants.com/media/sounds/yugioh-card-destroyed.mp3');
-        soundDraw.volume = 0.5;
-        soundDestroy.volume = 0.5;
+    <div id="game-container">
+        <div class="opponent-info" id="opponent-info-box">
+            <h2>Opponent</h2>
+            <p id="opponent-hp">HP: 20</p>
+            <p id="opponent-mana">Mana: 1/1</p>
+        </div>
+        <div id="opponent-field" class="field"></div>
+        <div class="opponent-deck">
+            <p>Deck: <span id="opponent-deck-count">30</span></p>
+        </div>
+        <div id="center-line"></div>
+        <div class="player-info">
+            <h2>Player</h2>
+            <p id="player-hp">HP: 20</p>
+            <p id="player-mana">Mana: 1/1</p>
+        </div>
+        <div id="player-field" class="field"></div>
+        <div class="player-deck">
+            <p>Deck: <span id="player-deck-count">30</span></p>
+        </div>
+    </div>
 
-        const icons = { attack: `<svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 14.3462V22H10.6538L21.5 11.1538L14.8462 4.5L4 14.3462Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M13.5 5.84619L20.1538 12.5" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`, defense: `<svg class="icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 22C12 22 20 18 20 12V5L12 2L4 5V12C4 18 12 22 12 22Z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>` };
-        
-        function resetGameState() { gameState = { player: { hp: 20, mana: 0, maxMana: 0, deck: [], hand: [], field: [] }, opponent: { hp: 20, mana: 0, maxMana: 0, deck: [], hand: [], field: [] }, isPlayerTurn: true, actionMenu: { element: null } }; }
-        function initGameObjects() { gameState.player.ui = { hp: document.getElementById('player-hp'), mana: document.getElementById('player-mana'), deck: document.getElementById('player-deck-count'), hand: document.getElementById('player-hand'), field: document.getElementById('player-field') }; gameState.opponent.ui = { hp: document.getElementById('opponent-hp'), mana: document.getElementById('opponent-mana'), deck: document.getElementById('opponent-deck-count'), field: document.getElementById('opponent-field'), infoBox: document.getElementById('opponent-info-box') }; }
-        function createDeck() { const deck = []; for (const cardName in cardDatabase) { for (let i = 0; i < 3; i++) { deck.push(cardName); } } return shuffle(deck); }
-        function shuffle(array) { for (let i = array.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [array[i], array[j]] = [array[j], array[i]]; } return array; }
-        
-        function drawCard(player) {
-            if (player.deck.length > 0) {
-                soundDraw.play().catch(()=>{});
-                const cardName = player.deck.pop();
-                const cardData = cardDatabase[cardName];
-                player.hand.push({ name: cardName, ...cardData, defense: cardData.defense, uniqueId: Date.now() + Math.random() });
-            }
-        }
-        
-        function startTurn(player) { if (player.maxMana < 10) player.maxMana++; player.mana = player.maxMana; player.field.forEach(c => c.canAttack = true); drawCard(player); updateUI(); }
-        function updateUI() { if (!gameState) return; gameState.player.ui.hp.textContent = `HP: ${gameState.player.hp}`; gameState.player.ui.mana.textContent = `Mana: ${gameState.player.mana}/${gameState.player.maxMana}`; gameState.player.ui.deck.textContent = gameState.player.deck.length; gameState.opponent.ui.hp.textContent = `HP: ${gameState.opponent.hp}`; gameState.opponent.ui.mana.textContent = `Mana: ${gameState.opponent.mana}/${gameState.opponent.maxMana}`; gameState.opponent.ui.deck.textContent = gameState.opponent.deck.length; gameState.player.ui.hand.innerHTML = ''; gameState.player.hand.forEach(card => gameState.player.ui.hand.appendChild(createCardElement(card, 'hand'))); gameState.player.ui.field.innerHTML = ''; gameState.player.field.forEach(card => gameState.player.ui.field.appendChild(createCardElement(card, 'field'))); gameState.opponent.ui.field.innerHTML = ''; gameState.opponent.field.forEach(card => gameState.opponent.ui.field.appendChild(createCardElement(card, 'field'))); document.getElementById('turn-indicator').textContent = gameState.isPlayerTurn ? "Your Turn" : "Opponent's Turn"; document.getElementById('end-turn-button').disabled = !gameState.isPlayerTurn; }
-        function createCardElement(card, location) { const el = document.createElement('div'); el.className = 'card'; el.style.backgroundImage = `url(${card.image})`; el.dataset.id = card.uniqueId; el.innerHTML = `<div class="cost">${card.cost}</div><div class="stats"><span class="attack">${icons.attack} ${card.attack}</span><span class="defense">${icons.defense} ${card.defense}</span></div>`; if (location === 'hand') { el.onclick = () => playCard(card.uniqueId); } else if (location === 'field' && gameState.player.field.includes(card)) { el.onclick = (event) => showActionMenu(card, event); } return el; }
-        function playCard(uniqueId) { if (!gameState.isPlayerTurn) return; const cardIndex = gameState.player.hand.findIndex(c => c.uniqueId === uniqueId); if (cardIndex === -1) return; const card = gameState.player.hand[cardIndex]; if (card.cost <= gameState.player.mana && gameState.player.field.length < 5) { gameState.player.mana -= card.cost; card.canAttack = false; gameState.player.field.push(card); gameState.player.hand.splice(cardIndex, 1); updateUI(); } }
-        function createLaser(startEl, endEl) { const container = document.getElementById('game-container'); const startRect = startEl.getBoundingClientRect(); const endRect = endEl.getBoundingClientRect(); const containerRect = container.getBoundingClientRect(); const startX = startRect.left + startRect.width / 2 - containerRect.left; const startY = startRect.top + startRect.height / 2 - containerRect.top; const endX = endRect.left + endRect.width / 2 - containerRect.left; const endY = endRect.top + endRect.height / 2 - containerRect.top; const angle = Math.atan2(endY - startY, endX - startX) * 180 / Math.PI; const distance = Math.sqrt(Math.pow(endX - startX, 2) + Math.pow(endY - startY, 2)); const laser = document.createElement('div'); laser.className = 'laser'; laser.style.width = `${distance}px`; laser.style.top = `${startY}px`; laser.style.left = `${startX}px`; laser.style.transform = `rotate(${angle}deg)`; container.appendChild(laser); setTimeout(() => laser.remove(), 1000); }
-        function showActionMenu(card, event) { closeActionMenu(); if (!gameState.isPlayerTurn || !card.canAttack) return; const menu = document.createElement('div'); menu.className = 'action-menu'; gameState.opponent.field.forEach((opponentCard) => { const btn = document.createElement('button'); btn.textContent = `Attack ${opponentCard.name}`; btn.onclick = () => { attack(card, opponentCard); closeActionMenu(); }; menu.appendChild(btn); }); const directAttackBtn = document.createElement('button'); directAttackBtn.textContent = 'Attack Opponent Directly'; directAttackBtn.disabled = gameState.opponent.field.length > 0; directAttackBtn.onclick = () => { attack(card, gameState.opponent); closeActionMenu(); }; menu.appendChild(directAttackBtn); document.body.appendChild(menu); menu.style.left = `${event.clientX}px`; menu.style.top = `${event.clientY}px`; gameState.actionMenu.element = menu; }
-        function closeActionMenu() { if (gameState.actionMenu.element) { gameState.actionMenu.element.remove(); gameState.actionMenu.element = null; } }
-        document.addEventListener('click', (event) => { if (gameState && gameState.actionMenu.element && !gameState.actionMenu.element.contains(event.target) && !event.target.closest('.card')) { closeActionMenu(); } });
-        
-        function attack(attacker, defender) {
-            const attackerEl = document.querySelector(`[data-id='${attacker.uniqueId}']`);
-            const defenderIsPlayer = defender.hp !== undefined;
-            const defenderEl = defenderIsPlayer ? document.getElementById(gameState.player.field.includes(attacker) ? 'opponent-info-box' : 'player-info-box') : document.querySelector(`[data-id='${defender.uniqueId}']`);
-            if (attackerEl && defenderEl) createLaser(attackerEl, defenderEl);
-            if (defenderIsPlayer) defender.hp -= attacker.attack; else defender.defense -= attacker.attack;
-            attacker.canAttack = false;
-            
-            if (defender.defense <= 0) {
-                soundDestroy.play().catch(()=>{});
-                const destroyedCardEl = document.querySelector(`[data-id='${defender.uniqueId}']`);
-                if (destroyedCardEl) destroyedCardEl.classList.add('destroyed');
-                setTimeout(() => {
-                    if(gameState.player.field.includes(defender)) gameState.player.field = gameState.player.field.filter(c => c.uniqueId !== defender.uniqueId);
-                    else gameState.opponent.field = gameState.opponent.field.filter(c => c.uniqueId !== defender.uniqueId);
-                    updateUI();
-                }, 500);
-            } else { setTimeout(updateUI, 200); }
-            if (gameState.player.hp <= 0) { setTimeout(() => endGame("You Lose!"), 300); } else if (gameState.opponent.hp <= 0) { setTimeout(() => endGame("You Win!"), 300); }
-        }
+    <div id="player-hand"></div>
+    <div id="turn-indicator"></div>
+    <button id="end-turn-button">End Turn</button>
 
-        function opponentTurn() {
-            startTurn(gameState.opponent);
-            const playableCards = gameState.opponent.hand.filter(c => c.cost <= gameState.opponent.mana);
-            if (playableCards.length > 0 && gameState.opponent.field.length < 5) {
-                const cardToPlay = playableCards[0];
-                gameState.opponent.mana -= cardToPlay.cost;
-                cardToPlay.canAttack = false;
-                gameState.opponent.field.push(cardToPlay);
-                gameState.opponent.hand = gameState.opponent.hand.filter(c => c.uniqueId !== cardToPlay.uniqueId);
-            }
-            updateUI();
-            const attackers = gameState.opponent.field.filter(c => c.canAttack);
-            setTimeout(() => {
-                attackers.forEach(attacker => {
-                    const target = gameState.player.field.length > 0 ? gameState.player.field[0] : gameState.player;
-                    attack(attacker, target);
-                });
-                setTimeout(() => {
-                    gameState.isPlayerTurn = true;
-                    startTurn(gameState.player);
-                }, 1000);
-            }, 1000);
-        }
-        
-        document.getElementById('end-turn-button').onclick = () => { if (!gameState.isPlayerTurn) return; closeActionMenu(); gameState.isPlayerTurn = false; updateUI(); setTimeout(opponentTurn, 1500); };
-        function endGame(message) { alert(message); document.getElementById('game-container').style.display = 'none'; document.getElementById('player-hand').innerHTML = ''; document.getElementById('turn-indicator').style.display = 'none'; document.getElementById('end-turn-button').style.display = 'none'; document.getElementById('main-menu').style.display = 'flex'; }
-        
-        document.getElementById('play-ai-button').onclick = () => {
-            soundDraw.play().catch(e => console.error("Sound error:", e));
-            soundDestroy.play().catch(e => console.error("Sound error:", e));
-            soundDraw.pause(); soundDestroy.pause();
-
-            document.getElementById('main-menu').style.display = 'none';
-            document.getElementById('game-container').style.display = 'grid';
-            document.getElementById('turn-indicator').style.display = 'block';
-            document.getElementById('end-turn-button').style.display = 'block';
-            resetGameState(); initGameObjects();
-            gameState.player.deck = createDeck(); gameState.opponent.deck = createDeck();
-            for(let i=0; i<5; i++) { drawCard(gameState.player); }
-            for(let i=0; i<5; i++) { if (gameState.opponent.deck.length > 0) { const cardName = gameState.opponent.deck.pop(); const cardData = cardDatabase[cardName]; gameState.opponent.hand.push({ name: cardName, ...cardData, defense: cardData.defense, uniqueId: Date.now() + Math.random() }); } }
-            startTurn(gameState.player);
-        };
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
