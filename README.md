@@ -1,1 +1,1 @@
-# Myhology-Game
+# Mythology-Game
